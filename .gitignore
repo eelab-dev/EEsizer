@@ -4,6 +4,9 @@ output/
 # Ignore all folders named 'test'
 test/
 
+# Ignore all folders named 'output'
+output_netlist/
+
 # Ignore Python cache files
 __pycache__/
 *.pyc
