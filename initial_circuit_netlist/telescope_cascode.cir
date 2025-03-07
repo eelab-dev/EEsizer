@@ -1,0 +1,27 @@
+.title Opamp
+.include '180nm_bulk.txt'
+
+M1 d1 in1 midp vss nmos W=1u L=0.18u
+M2 d2 in2 midp vss nmos W=1u L=0.18u
+M3 out1 bias2 d1 d1 nmos W=1u L=0.18u
+M4 out2 bias2 d2 d2 nmos W=1u L=0.18u
+
+M9 midp bias1 vss vss nmos W=1u L=0.18u
+
+M5 out1 bias3 s5 s5 pmos W=1u L=0.18u
+M6 out2 bias3 s6 s6 pmos W=1u L=0.18u
+M7 out1 out1 vdd vdd pmos W=1u L=0.18u
+M8 s6 out1 vdd vdd pmos W=1u L=0.18u
+
+vdd vdd 0 DC 1.8
+vss vss 0 DC 0
+vbias1 bias1 0 DC 0.9
+vbias2 bias2 0 DC 0.9
+vbias3 bias3 0 DC 0.9
+
+Vcm cm 0 DC 0.9
+Eidp cm in1 diffin 0 1
+Eidn cm in2 diffin 0 -1
+Vid diffin 0 DC 0 AC 1 
+
+.end

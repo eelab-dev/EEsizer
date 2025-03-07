@@ -1,0 +1,8 @@
+.title Basic Amplifier
+Vdd vdd 0 1.8V
+R1 vdd out 50kOhm
+M1 out in 0 0 nm l=90nm w=1um
+Vin in 0 DC 0.3V AC 1
+.model nm nmos level=14 version=4.8.1   
+.op
+.end

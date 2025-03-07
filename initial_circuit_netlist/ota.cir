@@ -1,0 +1,19 @@
+.title Basic amp
+.include '180nm_bulk.txt'
+M3 out1 out1 vdd vdd pmos W=1u L=0.09u
+M4 out2 out1 vdd vdd pmos W=1u L=0.09u
+M1 out1 in1 midp 0 nmos W=1u L=0.09u
+M2 out2 in2 midp 0 nmos W=1u L=0.09u
+M5 midp bias 0 0 nmos W=1u L=0.09u
+M6 vdd out2 out 0 nmos W=1u L=0.09u
+M7 out bias 0 0 nmos W=1u L=0.09u
+
+vbias bias 0 DC 0.3
+vdd vdd 0 1.9
+Vcm cm 0 DC 0.3
+Eidp cm in1 diffin 0 1
+Eidn cm in2 diffin 0 -1
+Vid diffin 0 DC 0 AC 1 
+.op
+
+.end

@@ -1,0 +1,12 @@
+.title Basic circuit
+mp1 out a vdd vdd pm L=90n W=10u   
+mp2 out b vdd vdd pm L=90n W=10u  
+mn1 out a n1  0 nm L=90n W=10u   
+mn2 n1  b 0 0 nm L=90n W=10u   
+Vdd vdd 0 DC 1.8
+Va a 0 pulse (0 1.8 0 0.1n 0.1n 25n 50n)
+Vb b 0 pulse (0 1.8 0 0.1n 0.1n 40n 80n)
+.model nm nmos level=14 version=4.8.1
+.model pm pmos level=14 version=4.8.1
+
+.end

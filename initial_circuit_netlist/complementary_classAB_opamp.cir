@@ -1,0 +1,50 @@
+.title Basic amp
+.include '180nm_bulk.txt'
+.param Vcm = 0.9
+M3 d3 in2 midp vdd pmos W=1u L=180n
+M4 d4 in1 midp vdd pmos W=1u L=180n
+M6 midp bias1 vdd vdd pmos W=1u L=180n
+
+M1 d1 in1 midn 0 nmos W=1u L=180n
+M2 d2 in2 midn 0 nmos W=1u L=180n
+M5 midn bias2 0 0 nmos W=1u L=180n
+
+M7 d1 g7 vdd vdd pmos W=1u L=180n
+M8 d2 g7 vdd vdd pmos W=1u L=180n
+M9 g7 bias3 d1 vdd pmos W=1u L=180n
+M10 d10 bias3 d2 vdd pmos W=1u L=180n
+
+M15 g7 bias5 s15 0 nmos W=1u L=180n
+M16 s15 bias6 g7 vdd pmos W=1u L=180n
+M17 d10 bias5 s17 0 nmos W=1u L=180n
+M18 s17 bias6 d10 vdd pmos W=1u L=180n
+
+M11 s15 bias4 d4 0 nmos W=1u L=180n
+M12 s17 bias4 d3 0 nmos W=1u L=180n
+M13 d4 s15 0 0 nmos W=1u L=180n
+M14 d3 s15 0 0 nmos W=1u L=180n
+
+M19 out d10 vdd vdd pmos W=1u L=180n
+M20 out s17 0 0 nmos W=1u L=180n
+
+Cc1 out d10 5p
+Cc2 out s17 5p
+Cl out 0 10p 
+Rl out 0 1k
+
+vbias1 bias1 0 DC 0.9
+vbias2 bias2 0 DC 0.9
+vbias3 bias3 0 DC 0.9
+vbias4 bias4 0 DC 0.9
+vbias5 bias5 0 DC 0.9
+vbias6 bias6 0 DC 0.9
+
+vdd vdd 0 1.8
+
+Vcm cm 0 DC {Vcm}
+Eidp cm in1 diffin 0 1
+Eidn cm in2 diffin 0 -1
+Vid diffin 0 AC 1 SIN (0 1u 10k 0 0)
+.op
+
+.end

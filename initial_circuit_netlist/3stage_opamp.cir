@@ -1,0 +1,27 @@
+.title 3 stage Opamp
+.include '180nm_bulk.txt'
+Vbias1 bias1 0 DC 0.9
+Vbias2 bias2 0 DC 0.9
+Vbias3 bias3 0 DC 0.9
+vdd vdd 0 1.8
+Vcm cm 0 DC 0.9
+Eidp cm in1 diffin 0 1
+Eidn cm in2 diffin 0 -1
+Vid diffin 0 DC 0 AC 1
+M3 d1   d1 vdd vdd pmos W=1u L=180nm
+M4 d2   d1 vdd vdd pmos W=1u L=180nm
+M1 d1  in1 midp 0 nmos W=1u L=180nm
+M2 d2  in2 midp 0 nmos W=1u L=180nm
+M5 midp bias1 0 0 nmos W=1u L=180nm
+M6 d3 d2 vdd vdd pmos W=1u L=180nm
+M7 d3  d3 0 0 nmos W=1u L=180nm
+M8 d4  d3 0 0 nmos W=1u L=180nm
+M9 d4 bias2 vdd vdd pmos W=1u L=180nm
+M10 out bias3 vdd vdd pmos W=1u L=180nm
+M11 out  d4 0 0 nmos W=1u L=180nm
+R1  r1 out 500
+cm1 d2 r1 1p
+cm2 d4 r1 1p
+CL out 0 10p
+      
+.end
