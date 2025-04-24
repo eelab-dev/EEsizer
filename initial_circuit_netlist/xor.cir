@@ -1,20 +1,19 @@
 .title LOGIC
-mp0 ab  a    vdd vdd pmos1 L=0.09u W=10u
-mn0 ab  a    0 0 nmos1 L=0.09u W=10u
-mp1 bb  b    vdd vdd pmos1 L=0.09u W=10u 
-mn1 bb  b    0   0 nmos1 L=0.09u W=10u 
-mp2 n1  a    vdd vdd pmos1 L=0.09u W=10u   
-mp3 n1  b    vdd vdd pmos1 L=0.09u W=10u  
-mp4 out ab   n1  vdd pmos1 L=0.09u W=10u 
-mp5 out bb   n1  vdd pmos1 L=0.09u W=10u 
-mn2 out a    n2  0 nmos1 L=0.09u W=10u  
-mn3 n2  b    0 0 nmos1 L=0.09u W=10u
-mn4 out ab   n3  0 nmos1 L=0.09u W=10u
-mn5 n3  bb   0 0 nmos1 L=0.09u W=10u
+.include '180nm_bulk.txt'
+mp0 ab  a    vdd vdd pmos L=0.09u W=10u
+mn0 ab  a    0 0 nmos L=0.09u W=10u
+mp1 bb  b    vdd vdd pmos L=0.09u W=10u 
+mn1 bb  b    0   0 nmos L=0.09u W=10u 
+mp2 n1  a    vdd vdd pmos L=0.09u W=10u   
+mp3 n1  b    vdd vdd pmos L=0.09u W=10u  
+mp4 out ab   n1  vdd pmos L=0.09u W=10u 
+mp5 out bb   n1  vdd pmos L=0.09u W=10u 
+mn2 out a    n2  0 nmos L=0.09u W=10u  
+mn3 n2  b    0 0 nmos L=0.09u W=10u
+mn4 out ab   n3  0 nmos L=0.09u W=10u
+mn5 n3  bb   0 0 nmos L=0.09u W=10u
 Vdd vdd 0 DC 1.8
 Va a 0 pulse (0 1.8 0 0.1n 0.1n 25n 50n)
 Vb b 0 pulse (0 1.8 0 0.1n 0.1n 40n 80n)
-.model nmos1 nmos level=14 version=4.8.1
-.model pmos1 pmos level=14 version=4.8.1
 
 .end

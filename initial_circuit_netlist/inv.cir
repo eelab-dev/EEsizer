@@ -1,10 +1,9 @@
 .title LOGIC_INV
-mp1 out in vdd vdd pmos1 L=0.09u W=1u
-mn1 out in 0 0 nmos1 L=0.09u W=1u   
+.include '180nm_bulk.txt'
+mp1 out in vdd vdd pmos L=0.09u W=1u
+mn1 out in 0 0 nmos L=0.09u W=1u   
 
 Vdd vdd 0 DC 1.8
 Vin in 0 pulse (0 1.8 0 0.1n 0.1n 25n 50n)
-.model nmos1 nmos level=14 version=4.8.1
-.model pmos1 pmos level=14 version=4.8.1
 
 .end

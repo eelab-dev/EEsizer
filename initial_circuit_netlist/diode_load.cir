@@ -1,9 +1,10 @@
 .title Single-Stage Amplifier with PMOS Diode-Connected Load
+.include '180nm_bulk.txt'
+
 Vdd Vdd 0 1.8
 Vin in 0 DC 0.15 AC 1
-M1 out in 0 0 nm l=90n w=1u
-M2 out out Vdd Vdd pm l=90n w=1u
-.model nm nmos level=14 version=4.8.1
-.model pm nmos level=14 version=4.8.1
+M1 out in 0 0 nmos l=90n w=1u
+M2 out out Vdd Vdd pmos l=90n w=1u
+
 .op
 .end

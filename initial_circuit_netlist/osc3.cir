@@ -1,15 +1,15 @@
 .title osc
-m1 out1 vg1 0 0 nm W=1.0u L=0.09u 
-m2 out1 vg1 vdd vdd pm W=1.0u L=0.09u 
-m3 out2 out1 0 0 nm W=1.0u L=0.09u 
-m4 out2 out1 vdd vdd pm W=1.0u L=0.09u 
-m5 vg1 out2 0 0 nm W=1.0u L=0.09u 
-m6 vg1 out2 vdd vdd pm W=1.0u L=0.09u 
+.include '180nm_bulk.txt'
+m1 out1 vg1 0 0 nmos W=1.0u L=0.09u 
+m2 out1 vg1 vdd vdd pmos W=1.0u L=0.09u 
+m3 out2 out1 0 0 nmos W=1.0u L=0.09u 
+m4 out2 out1 vdd vdd pmos W=1.0u L=0.09u 
+m5 vg1 out2 0 0 nmos W=1.0u L=0.09u 
+m6 vg1 out2 vdd vdd pmos W=1.0u L=0.09u 
 c1 out1 0 1p
 c2 out2 0 1p
 c3 vg1 0 1p
 vdd vdd 0 1.8
-.model nm nmos level=14 version=4.8.1
-.model pm pmos level=14 version=4.8.1
+
 .op
 .end
