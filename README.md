@@ -60,7 +60,7 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 
 ### Model Output:
 
-**Output netlist**: [Optimization netlist](/variation/a5.cir)
+**Output netlist**: [Optimized netlist](/variation/a5.cir)
 
 **Result history**:
 
