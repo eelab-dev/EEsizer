@@ -60,10 +60,13 @@ We evaluated the performance of different LLMs to assess their applicability and
 
 ## Example 
 
-**User input**:
+### User input:    
+
 "This is a circuit netlist, optimize this circuit with a output swing above 1.7V, input offset smaller than 0.001V, input common mode range bigger than 1.6, ac gain and transient gain above 60dB, unity bandwidth above 10000000Hz, phase margin bigger than 50 degree, power smaller than 0.05W, cmrr bigger than 100dB and thd small than -26dB"
 
 **Netlist**: [Complemention classAB opamp](/initial_circuit_netlist/complementary_classAB_opamp.cir)
+
+### Model Output:
 
 **Result history**:
 
@@ -73,7 +76,7 @@ We evaluated the performance of different LLMs to assess their applicability and
 
 **Output netlist**: [Optimization netlist](/variation/a5.cir)
 
-**Variation Results**:
+### Variation Results:
 
 ![Variation results.](/figures/a5_bias_var_subplots.png) 
 
