@@ -7,13 +7,10 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 
 ### Key Features
 
- **1. AI-assisted sizing recommendations**: Get LLM-generated suggestions for transistor dimensions based on your circuit specifications
- 
- **2. SPICE-compatible output**: Generates netlists compatible with popular circuit simulators ngspice.
- 
- **3. Simulation in-loop**: Achieved by LLM function calling. All the functions are corresponding to specific metrics and are pre-defined in the agent by the developer.
- 
- **4. Performance-aware iterative optimization**: Considers the required key AMS metrics (gain, bandwidth, power, etc.) during sizing. A result history is also used to provide a highly relevant context to enable effective in-context learning.
+1. AI-assisted sizing recommendations: Get LLM-generated suggestions for transistor dimensions based on your circuit specifications
+2. SPICE-compatible output**: Generates netlists compatible with popular circuit simulators ngspice.
+3. Simulation in-loop**: Achieved by LLM function calling. All the functions are corresponding to specific metrics and are pre-defined in the agent by the developer.
+4. Performance-aware iterative optimization**: Considers the required key AMS metrics (gain, bandwidth, power, etc.) during sizing. A result history is also used to provide a highly relevant context to enable effective in-context learning.
 
 ### Getting Started
 
@@ -48,7 +45,7 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 
 ##### Basic Usage
 1. Choose a LLM model from Claude 3 family, GPT 4o and 40 mini, and gemini 2.0 are available in the corresponding folder. Include api key and url in your environment.
-**Example**: add 'API_KEY= <your api key> ' in enviroment or define it in notebook as 'api_key = <your api key>'. 
+- **Example**: add 'API_KEY= <your api key> ' in enviroment or define it in notebook as 'api_key = <your api key>'. 
 2. Find a netlist in folder [netlist](/initial_circuit_netlist) or prepare your own circuit netlist (SPICE format).
 3. Specify your performance constraints from available metrics and input to to 'User input' block.
 4. Run the LLM-sizing tool and get the results.
