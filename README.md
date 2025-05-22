@@ -60,11 +60,11 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 
 ### Model Output:
 
+**Output netlist**: [Optimization netlist](/variation/a5.cir)
+
 **Result history**:
 
 ![Optimization results for the opamp.](/figures/railtorail_subplots_4x2.png)
-
-**Output netlist**: [Optimization netlist](/variation/a5.cir)
 
 ### Variation Results:
 
