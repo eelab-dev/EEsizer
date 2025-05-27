@@ -29,7 +29,7 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 | `bandwidth`       | -3dB bandwidth                       | `>100`                | MHz    |
 | `unity_bandwidth` | Unity-gain bandwidth                 | `>200`                | MHz    |
 
-### Available Circuits
+### Available Circuits(please find in forder [netlist](/initial_circuit_netlist))
 | Circuit                       | Description                                               | Number of Transistors |
 |-------------------------------|-----------------------------------------------------------|-----------------------|
 | `R_load.cir`                  | Basic amplifier with resistor load                        | `1`                   |
@@ -40,7 +40,7 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 | `ota.cir`                     | 5 transistor OTA with buffer output                       | `7`                   |
 | `telescope_cascode.cir`       | Telescope cascode amplifier                               | `9`                   |
 | `xor.cir`                     | XOR gate                                                  | `12`                  |
-| `complementary_classAB_opamp` | Complementary input stage and class AB output stage opamp | `20`                  |
+| `complementary_classAB_opamp.cir` | Complementary input stage and class AB output stage opamp | `20`                  |
 
 
 ### Basic Usage
