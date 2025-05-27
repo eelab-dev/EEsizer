@@ -8,14 +8,14 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 ## Key Features
 
 1. AI-assisted sizing: Get LLM-generated suggestions for transistor dimensions based on input specifications
-2. SPICE-compatible output**: Generates netlists compatible with popular circuit simulators ngspice.
-3. Simulation in-loop**: Achieved by LLM function calling. All the functions are pre-defined in the agent.
+2. SPICE-compatible output: Generates netlists compatible with popular circuit simulators ngspice.
+3. Simulation in-loop: Achieved by LLM function calling. All the functions are pre-defined in the agent.
 4. Performance-aware iterative optimization**: Considers the required key AMS metrics during sizing. Result history is also used to provide a highly relevant context to enable effective in-context learning.
 
 ## Getting Started
 
 ### Available Metrics
-| Metric            | Description                          | Target Syntax Example | Units  |
+| Metric            | Description                          | Target Example        | Units  |
 |-------------------|--------------------------------------|-----------------------|--------|
 | `ac_gain`         | Small-signal voltage gain            | `>60`                 | dB     |
 | `tran_gain`       | Large-signal transient gain          | `>55`                 | dB     |
