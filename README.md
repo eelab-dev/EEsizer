@@ -20,14 +20,14 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 | `ac_gain`         | Small-signal voltage gain            | `>60`                 | dB     |
 | `tran_gain`       | Large-signal transient gain          | `>55`                 | dB     |
 | `phase_margin`    | Stability margin                     | `>60`                 | °      |
-| `power`           | Total power consumption              | `<2`                  | mW     |
-| `THD`             | Total harmonic distortion            | `<1`                  | %      |
+| `power`           | Total power consumption              | `<0.002`                  | W     |
+| `THD`             | Total harmonic distortion            | `<-26`                  | dB      |
 | `CMRR`            | Common-mode rejection ratio          | `>80`                 | dB     |
 | `output_swing`    | Maximum output voltage range         | `>1.5`                | V      |
-| `offset`          | Input-referred offset voltage        | `<5`                  | mV     |
+| `offset`          | Input-referred offset voltage        | `<0.005`                  | V     |
 | `ICMR`            | Input common-mode range              | `>1.5`                | V      |
-| `bandwidth`       | -3dB bandwidth                       | `>100`                | MHz    |
-| `unity_bandwidth` | Unity-gain bandwidth                 | `>200`                | MHz    |
+| `bandwidth`       | -3dB bandwidth                       | `>10000`                | Hz    |
+| `unity_bandwidth` | Unity-gain bandwidth                 | `>20000`                | Hz    |
 
 ### Available Circuits(please find in [netlist](/initial_circuit_netlist))
 | Circuit                       | Description                                               | Number of Transistors |
