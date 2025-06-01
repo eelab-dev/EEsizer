@@ -44,21 +44,28 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 
 
 ### Basic Usage 
-1. Choose a LLM model from [Claude 3 family](/agent_test_claude/agent_claude3.5.ipynb), [GPT 4o](/agent_test_gpt/agent_4o.ipynb) and [40 mini](/agent_test_gpt/agent_4omini.ipynb), and [gemini 2.0](/agent_test_gemini/gemini_2.0.ipynb) are available in the corresponding folder. Please include api key and url in your environment.
-2. Find a netlist in [available netlist](/initial_circuit_netlist) or prepare your own circuit netlist (SPICE format).
-3. Specify your performance constraints from available metrics and input to to 'User input' block.
+1. Choose a LLM model from [Claude 3 family](/agent_test_claude/agent_claude3.5.ipynb), [GPT 4o](/agent_test_gpt/agent_4o.ipynb) and [4o mini](/agent_test_gpt/agent_4omini.ipynb), and [gemini 2.0](/agent_test_gemini/gemini_2.0.ipynb) are available in the corresponding folder. 
+Please add your api key and url in .env use the format below:
+```
+API_URL="your url"
+API_KEY=your api
+```
+2. Find a netlist in [available netlist](/initial_circuit_netlist) or prepare your own circuit netlist (SPICE format) and load it to netlist input:
+```
+with open('../initial_circuit_netlist/complementary_classAB_opamp.cir', 'r') as f:
+    netlist = f.read() 
+```
+or copy and paste it to variable 'netlist'.
+3. Specify your performance constraints from available metrics and input to 'User input' block and input to variable:
+```
+tasks_generation_question = "This is a circuit netlist, optimize this circuit with ...
+```
 4. Run the LLM-sizing tool and get the results.
 5. Further verify the circuit by a variation test in [variation](/variation)
 
 ## Example 
 
 **Model**: [Gemini 2.0 lite](/agent_test_gemini/gemini_2.0.ipynb)
-
-**Model API and URL**: Please add your api key and url in .env use the format below:
-```
-API_URL="your url"
-API_KEY=your api
-```
 
 **User input**:    
 ```
