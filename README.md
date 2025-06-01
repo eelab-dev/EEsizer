@@ -52,9 +52,11 @@ The tool takes as input a SPICE-based netlist and natural language performance s
 
 ## Example 
 
-### User input:    
+'''User input:    
 
 "This is a circuit netlist, optimize this circuit with a output swing above 1.7V, input offset smaller than 0.001V, input common mode range bigger than 1.6, ac gain and transient gain above 60dB, unity bandwidth above 10000000Hz, phase margin bigger than 50 degree, power smaller than 0.05W, cmrr bigger than 100dB and thd small than -26dB"
+
+'''
 
 **Netlist**: [Complemention classAB opamp](/initial_circuit_netlist/complementary_classAB_opamp.cir)
 
