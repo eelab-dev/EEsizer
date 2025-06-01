@@ -56,9 +56,10 @@ with open('../initial_circuit_netlist/complementary_classAB_opamp.cir', 'r') as 
     netlist = f.read() 
 ```
 or copy and paste it to variable 'netlist'.
+
 3. Specify your performance constraints from available metrics and input to 'User input' block and input to variable:
 ```
-tasks_generation_question = "This is a circuit netlist, optimize this circuit with ...
+tasks_generation_question = "This is a circuit netlist, optimize this circuit with ... "
 ```
 4. Run the LLM-sizing tool and get the results.
 5. Further verify the circuit by a variation test in [variation](/variation)
