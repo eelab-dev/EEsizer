@@ -94,3 +94,7 @@ tasks_generation_question = "This is a circuit netlist, optimize this circuit wi
 We evaluated the performance of different LLMs to assess their applicability and optimization effectiveness across seven basic circuits. 
 
 ![Performance comparison of different LLMs](/figures/performance.png)  
+
+# Acknowledgements 
+
+This work was made possible by Peter Denyer's PhD Scholarship at The University of Edinburgh.
