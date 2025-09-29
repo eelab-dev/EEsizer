@@ -95,9 +95,6 @@ We evaluated the performance of different LLMs to assess their applicability and
 
 ![Performance comparison of different LLMs](/figures/performance-new.png) 
 
-# Publication
-
-Please see [LLM-based AI Agent for Sizing of Analog and Mixed Signal Circuit](https://arxiv.org/abs/2504.11497). This work was presented in [NEWCAS2025](https://www.newcas2025.com/).
 
 # Acknowledgements 
 
