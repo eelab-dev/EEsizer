@@ -1,4 +1,4 @@
-# LLM-based AI Agent for Sizing of Analog and Mixed Signal Circuit
+# EEsizer: LLM-based AI Agent for Sizing of Analog and Mixed Signal Circuit
 
 ## Introduction
 
@@ -83,17 +83,17 @@ tasks_generation_question = "This is a circuit netlist, optimize this circuit wi
 
 **Result history**:
 
-![Optimization results for the opamp.](/figures/railtorail_subplots_4x2.png)
+![Optimization results for the opamp.](/figures/rail-to-rail-process.png)
 
 ### Variation Results:
 
-![Variation results.](/figures/a5_bias_var_subplots.png) 
+![Variation results.](/figures/monte-carlo-10var.png) 
 
 ## Evaluation of LLMs
 
 We evaluated the performance of different LLMs to assess their applicability and optimization effectiveness across seven basic circuits. 
 
-![Performance comparison of different LLMs](/figures/performance.png) 
+![Performance comparison of different LLMs](/figures/performance-new.png) 
 
 # Publication
 
