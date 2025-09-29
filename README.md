@@ -93,4 +93,12 @@ tasks_generation_question = "This is a circuit netlist, optimize this circuit wi
 
 We evaluated the performance of different LLMs to assess their applicability and optimization effectiveness across seven basic circuits. 
 
-![Performance comparison of different LLMs](/figures/performance.png)  
+![Performance comparison of different LLMs](/figures/performance.png) 
+
+# Publication
+
+Please see [LLM-based AI Agent for Sizing of Analog and Mixed Signal Circuit](https://arxiv.org/abs/2504.11497). This work was presented in [NEWCAS2025](https://www.newcas2025.com/).
+
+# Acknowledgements 
+
+This work was made possible by Peter Denyer's PhD Scholarship at The University of Edinburgh.
