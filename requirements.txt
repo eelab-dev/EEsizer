@@ -1,0 +1,4 @@
+typer
+pydantic
+numpy
+pytest

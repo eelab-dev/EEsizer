@@ -1,0 +1,193 @@
+EEsizer agent_gpt_openai notebook: developer documentation
+
+Scope
+- File analyzed: agent_test_gpt/agent_gpt_openai.ipynb
+- Goal: Inventory functions, inputs/outputs, data flow, side effects, and known issues to guide refactor into eesizer/ package with CLI and agents.
+
+High-level workflow
+1) Prompt ingestion and task decomposition
+   - make_chat_completion_request(prompt): streaming Chat Completions call. Returns concatenated string output from model.
+   - get_tasks(tasks_str): parses JSON emitted by LLM for {"questions": [...]}; populates globals type_question, node_question, sim_question, sizing_question.
+
+2) Target extraction and circuit type identification
+   - target_value_SYSTEM_PROMPT + make_chat_completion_request -> target_values JSON string.
+   - type_identify_template + make_chat_completion_request -> type_identified (free-form text; not structured).
+
+3) Node discovery
+   - node_SYSTEM_PROMPT + make_chat_completion_request -> nodes JSON string with keys input_node, output_node, source_name.
+   - nodes_extract(nodes_str): parses nodes JSON; returns (input_nodes[], output_nodes[], source_names[]).
+
+4) Simulation planning via function-calling
+   - make_chat_completion_request_function(prompt): calls Chat Completions with tools=[universal_circuit_tool] and tool_choice="required". Returns OpenAI client response object.
+   - extract_tool_data(tool): parses tool.choices[0].message.tool_calls[*].function.arguments (stringified JSON; may include concatenated objects). Returns list[dict] tool_data_list.
+   - format_simulation_types(tool_data_list): unique simulation_type ∈ {"dc","ac","transient"} -> [{"name": "<type>_simulation"}].
+   - format_simulation_tools(tool_data_list): unique simulation_tool (e.g., "run_ngspice") -> [{"name": sim_tool}]. NOTE: brittle if key missing.
+   - format_analysis_types(tool_data_list): ordered analysis items; defers {cmrr_tran, thd_input_range} to end because they change sim settings.
+   - combine_results(sim_types, sim_tools, analysis_types) -> tool_chain dict: {"tool_calls": [...]} for executor.
+
+5) Netlist augmentation (builders)
+   - dc_simulation(netlist, input_name, output_node): injects .control block to write output/output_dc.dat over DC sweep on Vcm.
+   - ac_simulation(netlist, input_name, output_node): injects .control block to write output/output_ac.dat for AC sweep.
+   - trans_simulation(netlist, input_name, output_node): injects .control block to write output/output_tran.dat (out, I(vdd), in1).
+   - tran_inrange(netlist): removes existing control block, replaces/adjusts sources; loops Vcm; writes output/output_tran_inrange.dat appended per step.
+
+6) Simulator invocation and raw data capture
+   - run_ngspice(circuit, filename): writes output/{filename}.cir; calls `ngspice -b`; captures stdout to output/op.txt (text log). Side effects: filesystem writes; no return value.
+
+7) Device operating-point “vgs check” pipeline
+   - filter_lines(input_file, output_file): reads op.txt, keeps lines beginning with "device <m...>", "vth ", or "vgs "; writes to filtered txt.
+   - convert_to_csv(input_txt, output_csv): parses filtered lines; constructs header row (device names), vth row, vgs row; writes CSV.
+   - format_csv_to_key_value(input_csv, output_txt): reads three rows from CSV; computes vgs - vth per device; writes negative cases to text.
+   - read_txt_as_string(path): utility to read text file contents.
+   Known issues:
+   - convert_to_csv assumes headers length > 0; num_columns=0 causes range() step=0 ValueError.
+   - format_csv_to_key_value assumes exactly 3 rows present.
+   - The pipeline depends on exact op.txt string formats emitted by ngspice stdout.
+
+8) Analysis functions (consume .dat files)
+   Input files are written by wrdata commands in injected .control blocks; paths under output/.
+   - tran_gain(file): loads output/<file>.dat; assumes 6 columns for single-output case; computes 20log10((max-min)/2e-6).
+   - ac_gain(file): supports 3-column or 6-column AC data; computes 20 log10(|Vd(0)|).
+   - bandwidth(file): half-power bandwidth computed from 20*log10 of complex output; uses >= (gain-3 dB) window.
+   - unity_bandwidth(file): scans for 0 dB crossing; implementation mirrors bandwidth with threshold 0.
+   - phase_margin(file): computes phase at unity gain; handles 0/180 deg starting phase heuristic.
+   - calculate_static_current(series): extracts near-static samples by |ΔI| ≤ threshold.
+   - stat_power(file, vdd): uses static current to estimate leakage power (abs(Ileak*vdd)).
+   - out_swing(file): spawns DC sweep with modified sources; gradient method to find region above threshold; returns swing.
+   - offset(file): spawns DC sweep versus Vin2; finds output at input=0.6 V; returns |Vout-0.6|.
+   - ICMR(file): DC sweep of Vcm; uses gradient≈1 and |Vout-Vin|≤0.02 V to estimate input common-mode range.
+   - cmrr_tran(netlist): modifies netlist to AC sweep with common-mode injection; loops Vcm; writes output_inrange_cmrr.dat; estimates CMRR across Vcm at 10 kHz sample.
+   - thd_input_range(file): builds tran_inrange netlist; FFT per “batch” (iteration between time resets) for THD; collects valid inputs with THD<threshold; returns max THD and covered input ranges.
+   - is_range_covered(outer, subs): utility to check if list of ranges covers an outer range.
+
+9) Orchestrator for a single simulation batch
+   - tool_calling(tool_chain):
+     Inputs: tool_chain[{name: ...}] as produced by planner; globals: netlist, source_names, output_nodes.
+     Steps:
+       • Apply dc/ac/transient builders to accumulate sim_netlist.
+       • run_ngspice(sim_netlist, 'netlist').
+       • Run vgs check pipeline: filter_lines(op.txt) → convert_to_csv → format_csv_to_key_value → read results.
+       • Compute analyses requested in tool_chain (ac_gain, bandwidth, unity_bandwidth, phase_margin, tran_gain, out_swing, offset, ICMR, power, cmrr_tran, thd_input_range).
+     Outputs:
+       • sim_output (string summary).
+       • sim_netlist (string with injected control blocks).
+     Side effects:
+       • Writes under output/ (netlists, data files, summaries). Uses many globals for caching initial metrics.
+
+10) Optimization loop (LLM-in-the-loop sizing)
+   - optimization(tools, target_values_str, sim_netlist):
+     Inputs:
+       • tools: same tool_chain used for running analyses.
+       • target_values_str: JSON string parsed into ac_gain_target, bandwidth_target, etc.
+       • sim_netlist: starting netlist string.
+     Algorithm:
+       • Initialize lists of metrics and pass flags with 5% tolerance.
+       • While iteration < 25 and not converged:
+           - Sleep delays between LLM calls.
+           - Build analysising_prompt → get analysis (free-text) from model.
+           - Build optimising_prompt with constraints → get adjustments suggestion (free-text) from model.
+           - Build sizing_prompt → request an updated netlist enclosed in triple quotes.
+           - Extract netlist with extract_code().
+           - Re-run tool pipeline (run_ngspice, vgs check, analyses) on updated netlist.
+           - Update pass/fail flags relative to targets (gain, tr_gain, ow, offset, icmr, bw, ubw, pm, power, cmrr, thd) and vgs check.
+           - Append results to rolling history file (output/90nm/result_history.txt) and metric lists.
+       • Upon exit, write CSV g2_o3.csv with initial and per-iteration metrics.
+       • Return summary dict + final optimized netlist.
+   - run_multiple_optimizations(target_values, sim_netlist, num_runs=1): simple loop to call optimization.
+
+11) Reporting and plots
+   - After optimization, copies final netlist to output/90nm/netlist_cs_o3/a1.cir.
+   - Generates subplots PDF railtorail_subplots_4x2_g1.pdf from g2_o3.csv.
+
+Key contracts (proposed)
+- Simulator
+  • Input: circuit: str (netlist text), name: str.
+  • Output: returns (stdout: str, returncode: int); writes named .cir and data files under an isolated run directory; logs separate from op.txt.
+  • Error modes: binary not found, non-zero exit, missing wrdata outputs.
+
+- Netlist builders
+  • Input: base netlist: str, input_names: list[str], output_nodes: list[str].
+  • Output: netlist: str with control block appended.
+  • Constraints: idempotent (remove prior .control/.endc blocks or stack safely), no hard-coded output paths.
+
+- Analysis functions
+  • Input: path to produced data (or in-memory arrays). Use typed dataclasses for AC/Tran/DC datasets.
+  • Output: floats or (float, extra); raise clear exceptions on malformed data.
+  • Edge cases: empty arrays, wrong column counts, NaNs.
+
+- Planner (LLM tools layer)
+  • Input: user intent + questions; Output: structured plan {sim_types, sim_tools, analyses}.
+  • Deterministic enforcement: validate keys and enums; defaulting when fields missing.
+
+Known issues and brittleness (observed)
+- Pathing and side effects
+  • Hard-coded relative paths like output/op.txt; no OUTPUT_DIR creation/safety.
+  • Single shared op.txt across runs; not namespaced per run.
+
+- convert_to_csv zero-step crash
+  • When headers list is empty, num_columns=0 → range() step 0 ValueError.
+  • format_csv_to_key_value assumes exactly three rows exist.
+
+- Tool parsing
+  • format_simulation_tools accesses tool_data["simulation_tool"] directly; KeyError when absent.
+
+- Duplicate definitions in notebook
+  • Multiple versions of helpers (e.g., convert_to_csv) exist; execution order can revert to fragile definitions.
+
+- JSON parsing from LLM
+  • get_tasks, nodes_extract strip "json" token and backticks; error-prone. Needs robust fenced block extraction and json5-like tolerances or schema validation.
+
+- AC/Tran data column assumptions
+  • ac_gain, bandwidth, unity_bandwidth infer shape by num_columns ∈ {3,6}. Requires stricter headers or metadata.
+
+- cmrr_tran and thd_input_range mutate simulation settings
+  • They alter sources and control blocks; must be sequenced last. Current orchestration does this, but coupling is high.
+
+Mapping to package (eesizer/)
+- eesizer/io/
+  • paths.py: OUTPUT_DIR management, run namespacing, temp dirs.
+  • fs.py: safe_read, safe_write, atomic writes, ensure_dir.
+
+- eesizer/sim/
+  • base.py: abstract Simulator (run(circuit: str, run_id: str) -> RunResult).
+  • ngspice.py: NgSpiceSimulator(cmd="ngspice", args=["-b"]). Handles logs, returncodes, and expected outputs.
+  • netlist_builders.py: dc/ac/tran/tran_inrange plus generic control block utils (strip/append idempotently).
+
+- eesizer/analysis/
+  • parsers.py: readers for wrdata formats, op log parser replacing convert_to_csv/format_csv_to_key_value with structured extraction.
+  • metrics.py: ac_gain, bandwidth, unity_bandwidth, phase_margin, tran_gain, out_swing, offset, icmr, power, cmrr, thd_input_range.
+
+- eesizer/llm/
+  • base.py: client wrapper; json extraction utilities; tool plan schema via Pydantic for validation.
+  • planner.py: build tool_chain deterministically.
+
+- eesizer/agents/
+  • base.py: abstract Agent; sizing/analysis agents and coordinator.
+
+- eesizer/cli/
+  • main.py: simulate/evaluate/optimize commands; run IDs and output directories; JSON/CSV emission.
+
+Refactor priorities
+1) Extract and harden run_ngspice into eesizer/sim/ngspice.py with namespaced runs and explicit outputs.
+2) Replace vgs-check CSV pipeline with a dedicated op log parser in eesizer/analysis/parsers.py; return dataclass of devices with {name, vgs, vth, margin}.
+3) Move netlist builders into eesizer/sim/netlist_builders.py and make them idempotent.
+4) Port analysis functions into eesizer/analysis/metrics.py with strict I/O contracts and tests.
+5) Implement planner schema (Pydantic) to validate simulation_types/analysis_types; handle missing simulation_tool gracefully.
+6) Modify notebook to import from eesizer and stop redefining helpers.
+
+Edge cases to cover in tests
+- Missing wrdata files (ngspice run failed or control block mis-specified).
+- Empty/short data arrays; NaNs/inf in AC/Tran columns.
+- No devices parsed from op log; ensure vgs-check returns empty list rather than crash.
+- cmrr_tran/thd_input_range path: ensure prior sim state is not polluted; run in isolated copies.
+- JSON from LLM with extra backticks or stray “json” tokens; ensure robust sanitizer and schema validation.
+
+Acceptance criteria (green before done)
+- Unit tests: NgSpiceSimulator run on a minimal RC netlist; metrics compute from synthetic arrays; op log parser tolerates missing sections.
+- CLI smoke: eesizer simulate --netlist initial_circuit_netlist/inv.cir runs and writes outputs without exceptions.
+- Notebook: can import eesizer modules and complete the first simulation batch (no optimization) end-to-end.
+
+Notes for implementers
+- Avoid globals; pass state explicitly or encapsulate in an Orchestrator class with run context (output_dir, run_id).
+- Prefer absolute paths under a run directory to avoid collisions.
+- Keep raw artifacts for debugging, but also produce structured JSON summaries per run for downstream steps.
