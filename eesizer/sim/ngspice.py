@@ -25,6 +25,9 @@ class NgSpiceSimulator(Simulator):
         try:
             # Ensure run_dir exists and execute within it so wrdata writes land here
             os.makedirs(self.run_dir, exist_ok=True)
+            # Ensure we pass an absolute path to ngspice to avoid cwd-relative duplication
+            cir_path = os.path.abspath(cir_path)
+            op_path = os.path.abspath(op_path)
             proc = subprocess.run(
                 [self.ngspice_bin, "-b", cir_path],
                 capture_output=True,

@@ -4,6 +4,44 @@ Scope
 - File analyzed: agent_test_gpt/agent_gpt_openai.ipynb
 - Goal: Inventory functions, inputs/outputs, data flow, side effects, and known issues to guide refactor into eesizer/ package with CLI and agents.
 
+Replacements performed (summary)
+- REPLACED: `run_ngspice` behavior: now implemented in `eesizer/sim/ngspice.py` which runs ngspice in a namespaced run directory and writes `op.txt`. It additionally parses `op.txt` via `eesizer.analysis.oplog.parse_vgs_vth_from_oplog` and writes `vgscheck_summary.json` and `vgscheck.txt` for backward compatibility.
+- REPLACED: the notebook cell that invoked the in-notebook `tool_calling(tool_chain)` (previously cell 26) — now replaced to call `eesizer.agents.orchestrator.Orchestrator.run_once()` and print a structured result. (Cell 26 marked replaced.)
+- REPLACED: the fragile vgs/CVS pipeline (`filter_lines`, `convert_to_csv`, `format_csv_to_key_value`) — replaced by `eesizer/analysis/oplog.py` parser. The notebook still contained old helper definitions; main invocation path now uses the new parser.
+
+Recent progress (as of 2025-11-07)
+---------------------------------
+- Added a new `eesizer/llm` package and moved the previously in-notebook LLM and planner helpers into it:
+  - `eesizer/llm/base.py` — LLM wrapper functions (re-implemented `make_chat_completion_request` and `make_chat_completion_request_function`).
+  - `eesizer/llm/schemas.py` — Pydantic models to validate tool plans (SimulationType, AnalysisType, ToolCall, ToolChain).
+  - `eesizer/llm/planner.py` — robust JSON extraction and planner helpers (`_find_json_blob`, `extract_tool_data`, `format_simulation_types`, `format_simulation_tools`, `format_analysis_types`, `combine_results`, `get_tasks`, `nodes_extract`).
+  - `eesizer/llm/__init__.py` — re-exports for convenient imports.
+
+- Updated the `agent_test_gpt/agent_gpt_openai.ipynb` notebook to import these functions instead of redefining them inline. Specifically:
+  - The cells that defined `make_chat_completion_request`, `make_chat_completion_request_function`, `get_tasks`, and the planner/helper block (`extract_tool_data`, `format_*`, `combine_results`, `nodes_extract`) were replaced with short import cells that load the implementations from `eesizer.llm`.
+
+- Validation performed in the devcontainer environment:
+  - Verified `import eesizer.llm` succeeds and the expected symbols are exported.
+  - Ran a small planner parsing test: passed a minimal tool-chain JSON string into `extract_tool_data` and parsed it into the Pydantic `ToolChain`/`ToolCall` model successfully.
+  - Ran a `nodes_extract` quick check (input: JSON nodes string) — the heuristic returned an empty list for that exact input (indicating the extractor ran but found no nodes for that sample). Consider improving the heuristic or adding tests for common node formats.
+  - Earlier ngspice AC smoke test (performed during previous edits) executed successfully and returned a numeric AC gain result, confirming the simulator wrapper and op-log parsing flow are functional for simple cases.
+
+Notes on current status
+-----------------------
+- Completed migrations:
+  - LLM wrappers moved to `eesizer.llm` (done).
+  - Planner/tool-extraction helpers moved to `eesizer.llm.planner` (done).
+  - Notebook cells updated to import from `eesizer.llm` (done for the core cells listed above).
+
+- Pending/high-priority work:
+  - Fully remove the brittle CSV pipeline occurrences left elsewhere in the notebook (some helper definitions still remain in unused cells) and ensure every execution path uses `eesizer.analysis.oplog.parse_vgs_vth_from_oplog` (TODO).
+  - Move the notebook `tool_calling` / `optimization` loops into the `eesizer.agents.orchestrator` or another package module so the notebook is thin and headless runs are repeatable (TODO).
+  - Add unit tests around the new `eesizer.llm` planner schemas and node extraction heuristics; add headless smoke tests that either mock the LLM or read from canned LLM outputs.
+
+This file has been updated to reflect the above changes; keep the rest of this document (workflow, contracts, and refactor priorities) as guidance for the remaining migration effort.
+
+Note: The rest of the notebook still contains many inline helper definitions (analysis helpers, LLM wrappers, optimization loop). The next steps below list which helpers should be ported and where.
+
 High-level workflow
 1) Prompt ingestion and task decomposition
    - make_chat_completion_request(prompt): streaming Chat Completions call. Returns concatenated string output from model.

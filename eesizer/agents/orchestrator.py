@@ -90,3 +90,67 @@ class Orchestrator:
             pass
 
         return results
+
+    def optimize(self, netlist_variants: List[str], tool_chain: Dict[str, Any], run_dir_base: Optional[str] = None) -> Dict[str, Any]:
+        """Evaluate multiple netlist variants and return the best according to a simple score.
+
+        Parameters
+        - netlist_variants: list of netlist text strings to evaluate
+        - tool_chain: the tool_chain dict used for each evaluation
+        - run_dir_base: if provided, each variant will be written to run_dir_base/variant_{i}
+
+        Returns a dict with keys:
+        - "best_index": index of the best variant
+        - "best_result": the results dict returned by run_once for the best variant
+        - "all_results": list of per-variant result dicts with an added "score" key
+
+        Note: scoring is intentionally simple and configurable by callers in future.
+        Current default scoring prefers AC gain (ac_gain_db) then transient gain (tran_gain_db).
+        """
+        all_results: List[Dict[str, Any]] = []
+
+        def score_result(r: Dict[str, Any]) -> float:
+            # Prefer ac_gain_db when available, else tran_gain_db, else fallback to 0
+            s = 0.0
+            try:
+                if "ac_gain_db" in r and isinstance(r["ac_gain_db"], (int, float)):
+                    s += float(r["ac_gain_db"]) * 1.0
+                elif "tran_gain_db" in r and isinstance(r["tran_gain_db"], (int, float)):
+                    s += float(r["tran_gain_db"]) * 0.9
+                # small bonus for unity bandwidth if present
+                if "unity_bandwidth_hz" in r and isinstance(r["unity_bandwidth_hz"], (int, float)):
+                    s += 0.001 * float(r["unity_bandwidth_hz"]) / (1e6)
+            except Exception:
+                pass
+            return s
+
+        best_idx = None
+        best_score = float("-inf")
+        best_result: Optional[Dict[str, Any]] = None
+
+        for i, net in enumerate(netlist_variants):
+            subdir = None
+            if run_dir_base:
+                subdir = os.path.join(run_dir_base, f"variant_{i}")
+            else:
+                subdir = self.run_dir
+
+            # create a short-lived orchestrator for each variant so run_dir can be isolated
+            orch = Orchestrator(run_dir=subdir, signals=self.signals)
+            try:
+                res = orch.run_once(net, tool_chain)
+            except Exception as e:
+                res = {"success": False, "error": str(e)}
+
+            sc = score_result(res)
+            res_with_score = dict(res)
+            res_with_score["score"] = sc
+            res_with_score["variant_index"] = i
+            all_results.append(res_with_score)
+
+            if sc > best_score:
+                best_score = sc
+                best_idx = i
+                best_result = res_with_score
+
+        return {"best_index": best_idx, "best_result": best_result, "all_results": all_results}
