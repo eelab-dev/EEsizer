@@ -1,0 +1,24 @@
+.title Basic amp
+M3 out1 out1 vdd vdd pmos1 W=100u L=0.45u
+M4 out2 out1 vdd vdd pmos1 W=100u L=0.45u
+M1 out1 in1 midp 0 nmos1 W=200u L=0.45u
+M2 out2 in2 midp 0 nmos1 W=200u L=0.45u
+M5 midp bias 0 0 nmos1 W=25u L=0.45u
+M6 vdd out2 out 0 nmos1 W=15u L=0.45u
+M7 out bias 0 0 nmos1 W=15u L=0.45u
+Cc out2 out 3.0p
+Cl out 0 10p
+vbias bias 0 DC 0.3
+vdd vdd 0 3.3
+Vcm cm 0 DC 0.3
+Eidp cm in1 diffin 0 1
+Eidn cm in2 diffin 0 -1
+Vid diffin 0 DC 0 AC 1 
+.model nmos1 nmos level=14 version=4.8.1
+.model pmos1 pmos level=14 version=4.8.1
+.ac dec 10 1 10G
+.control
+  run         
+  wrdata output_ac.dat out 
+.endc
+.end
