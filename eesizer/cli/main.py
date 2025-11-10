@@ -39,3 +39,8 @@ def simulate_ac(netlist: str, signals: List[str] = typer.Argument(["out"])):
 
 if __name__ == "__main__":
     app()
+
+
+def main() -> None:
+    """Console entrypoint for the `eesizer` CLI (installed via packaging)."""
+    app()

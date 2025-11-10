@@ -1,4 +1,6 @@
-typer
+typer[all]>=0.7.0
 pydantic
-numpy
-pytest
+numpy>=1.22
+pytest>=7.0
+# optional LLM providers
+# openai>=0.27.0

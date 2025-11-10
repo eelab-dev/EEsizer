@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eesizer"
+version = "0.0.1"
+description = "EEsizer — simulation, analysis and optimization tools for circuit designers"
+readme = "README.md"
+authors = [ { name = "Bol-C14" } ]
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+# Minimal runtime dependencies; keep LLM SDKs optional under extras
+dependencies = [
+  "typer[all]>=0.7.0",
+  "numpy>=1.22",
+  "pandas>=1.5",
+  "pytest>=7.0",
+]
+
+[project.optional-dependencies]
+llm = ["openai>=0.27.0"]
+
+[project.scripts]
+eesizer = "eesizer.cli.main:main"
