@@ -33,3 +33,37 @@ class ToolCall(BaseModel):
 
 class ToolChain(BaseModel):
     tool_calls: List[ToolCall]
+
+
+# LLM response schemas for analysis/optimization/sizing
+
+
+class Suggestion(BaseModel):
+    component: str
+    param: str
+    action: str
+    magnitude: Optional[str] = None
+    rationale: Optional[str] = None
+
+
+class AnalysisResponse(BaseModel):
+    pass_: bool
+    reasons: Optional[List[str]] = []
+    suggestions: Optional[List[Suggestion]] = []
+
+
+class Change(BaseModel):
+    component: str
+    param: str
+    action: str
+    value: Optional[str] = None
+    rationale: Optional[str] = None
+
+
+class OptimizeResponse(BaseModel):
+    changes: List[Change]
+
+
+class SizingResponse(BaseModel):
+    netlist_text: str
+    notes: Optional[str] = None
