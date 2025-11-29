@@ -22,4 +22,7 @@ __pycache__/
 
 # Ignore environment files
 .env
-venv
+.venv
+venv/
+venv/*
+output/
