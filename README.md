@@ -95,6 +95,34 @@ We evaluated the performance of different LLMs to assess their applicability and
 
 ![Performance comparison of different LLMs](/figures/performance-new.png) 
 
+## Updated results
+
+Performance evaluation for five attempts across three groups (G1, G2, and G3). A 5% tolerance is applied to all metrics; deviations beyond this tolerance are shown in <span style="color:red">red</span>. Different targets for G1 vs G2 and G1 vs G3 are shown in **bold**. For G1 and G3, a load capacitor `C_L = 10 pF` and load resistor `R_L = 1 kOhm` are considered. For G2, a load capacitor `C_L = 50 pF` and load resistor `R_L = 100 kOhm` are considered. If the 25th iteration is reached without meeting any of the targets, it is marked as a failure.
+
+| Group | Iter. | Gain (dB) | UGBW (MHz) | PM (deg) | Power (mW) | CMRR (dB) | THD (dB) | Offset (mV) | Output Swing (V) | ICMR (V) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| <span style="color:blue">G1 Target</span> | <span style="color:blue">25</span> | <span style="color:blue">>=65</span> | <span style="color:blue">>=10</span> | <span style="color:blue">>=50</span> | <span style="color:blue"><=10</span> | <span style="color:blue">>=100</span> | <span style="color:blue"><=-26</span> | <span style="color:blue"><=1</span> | <span style="color:blue">1.2</span> | <span style="color:blue">1.2</span> |
+| **G1 Initial** | **0** | **33.23** | **0.50** | **86.55** | <span style="color:green">0.46</span> | **55.93** | **-28.35** | **176** | **0.21** | <span style="color:green">0.21</span> |
+| G1-1 | **16** | 69.74 | 25.12 | 70.74 | <span style="color:green">4.05</span> | 102.36 | <span style="color:green">-24.81</span> | 0.03 | 1.15 | <span style="color:green">1.15</span> |
+| G1-2 | **20** | 69.14 | 19.95 | 77.01 | <span style="color:green">4.07</span> | 112.00 | <span style="color:green">-25.65</span> | 0.02 | 1.16 | <span style="color:green">1.15</span> |
+| G1-3 | fail | <span style="color:red">59.21</span> | 79.43 | 76.57 | 0.61 | <span style="color:red">23.17</span> | -27.95 | 0.52 | <span style="color:red">0.95</span> | <span style="color:red">1.02</span> |
+| G1-4 | fail | <span style="color:red">53.60</span> | 39.81 | 79.82 | 4.66 | <span style="color:red">36.28</span> | -25.52 | 0.18 | 1.15 | 1.19 |
+| G1-5 | fail | <span style="color:red">34.09</span> | 10.00 | 61.97 | 1.74 | <span style="color:red">70.17</span> | -42.05 | <span style="color:red">11.34</span> | <span style="color:red">0.85</span> | <span style="color:red">0.97</span> |
+| <span style="color:blue">G2 Target</span> | <span style="color:blue">25</span> | <span style="color:blue">>=65</span> | **<span style="color:blue">>= 5</span>** | **<span style="color:blue">>= 45</span>** | **<span style="color:blue"><= 5</span>** | <span style="color:blue">>=100</span> | <span style="color:blue"><=-26</span> | <span style="color:blue"><=1</span> | <span style="color:blue">1.2</span> | <span style="color:blue">1.2</span> |
+| **G2 Initial** | **0** | **40.03** | **1** | **75.05** | <span style="color:green">0.37</span> | **46.61** | **-37.91** | **2.05** | **1.08** | <span style="color:green">1.06</span> |
+| G2-1 | **20** | 65.83 | 12.59 | 61.26 | <span style="color:green">1.00</span> | 115.15 | -25.77 | 0.01 | 1.19 | 1.19 |
+| G2-2 | fail | 66.36 | <span style="color:red">1.99</span> | 48.06 | 0.40 | 107.62 | -31.71 | 0.06 | <span style="color:red">1.04</span> | 1.15 |
+| G2-3 | fail | <span style="color:red">47.04</span> | <span style="color:red">2.51</span> | <span style="color:red">36.19</span> | 0.40 | <span style="color:red">84.85</span> | -26.03 | 0.48 | 1.18 | 1.19 |
+| G2-4 | fail | <span style="color:red">53.87</span> | 5.01 | <span style="color:red">42.23</span> | 1.52 | 98.18 | -25.62 | 0.12 | 1.19 | 1.19 |
+| G2-5 | fail | <span style="color:red">57.23</span> | 6.31 | <span style="color:red">25.68</span> | 0.50 | <span style="color:red">46.76</span> | <span style="color:red">-23.41</span> | 0.14 | 1.19 | 1.19 |
+| <span style="color:blue">G3 Target</span> | <span style="color:blue">25</span> | <span style="color:blue">>=65</span> | **<span style="color:blue">>=50</span>** | **<span style="color:blue">>=50</span>** | **<span style="color:blue"><=20</span>** | **<span style="color:blue">>=80</span>** | **<span style="color:blue"><=-26</span>** | <span style="color:blue"><=1</span> | <span style="color:blue">1.2</span> | <span style="color:blue">1.2</span> |
+| **G3 Initial** | **0** | **33.23** | **0.50** | **86.55** | <span style="color:green">0.46</span> | **55.93** | **-28.35** | **176** | **0.21** | <span style="color:green">0.21</span> |
+| G3-1 | **16** | 64.51 | 125.89 | 68.75 | <span style="color:green">4.39</span> | 103.68 | -32.60 | 0.24 | 1.14 | <span style="color:green">1.07</span> |
+| G3-2 | fail | 66.67 | <span style="color:red">39.81</span> | <span style="color:red">37.09</span> | 4.23 | 103.50 | <span style="color:red">-21.05</span> | 0.69 | <span style="color:red">1.13</span> | 1.18 |
+| G3-3 | fail | 75.34 | 125.89 | <span style="color:red">33.74</span> | 13.72 | 126.24 | <span style="color:red">-20.15</span> | 0.06 | 1.17 | 1.19 |
+| G3-4 | fail | 67.68 | 63.09 | 51.55 | 3.69 | 120.84 | <span style="color:red">-18.39</span> | 0.09 | <span style="color:red">1.11</span> | 1.14 |
+| G3-5 | fail | 66.67 | <span style="color:red">37.08</span> | <span style="color:red">39.81</span> | 4.00 | 103.51 | <span style="color:red">-21.08</span> | 0.07 | 1.14 | 1.18 |
+
 # Publication
 
 Please see [LLM-based AI Agent for Sizing of Analog and Mixed Signal Circuit](https://arxiv.org/abs/2504.11497). This work was presented in [NEWCAS2025](https://www.newcas2025.com/).
