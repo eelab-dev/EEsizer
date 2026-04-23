@@ -95,6 +95,11 @@ We evaluated the performance of different LLMs to assess their applicability and
 
 ![Performance comparison of different LLMs](/figures/performance-new.png) 
 
+# Publication
+
+This work is published in [IEEE TCAS I](https://ieeexplore.ieee.org/abstract/document/11318860), and the preprint is available on [Arxiv](https://arxiv.org/pdf/2509.25510). Please cite below for reference: 
+
+_Chang Liu and Danial Chitnis, "EEsizer: Llm-based ai agent for sizing of analog and mixed signal circuit." IEEE Transactions on Circuits and Systems I: Regular Papers, Dec 2025._
 
 # Acknowledgements 
 
